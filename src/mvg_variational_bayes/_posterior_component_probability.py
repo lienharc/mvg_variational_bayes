@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 import numpy as np
 from numpy import typing as npt
 
-from ._data_dtype import data_dtype
+from mvg_variational_bayes._data_dtype import data_dtype
 
 
 @dataclass
@@ -12,6 +12,7 @@ class PosteriorComponentProbability:
     """A dataclass representing the posterior probability that an observation i belongs to a component j.
 
     Wrapper around a matrix of dimension data_size x num_components"""
+
     _prob_matrix: npt.NDArray[data_dtype]
     _importance: Optional[npt.NDArray[data_dtype]] = field(init=False, default=None)
 
@@ -56,3 +57,12 @@ class PosteriorComponentProbability:
 
         new_prob_matrix = self.prob_matrix.transpose()[keep_mask].transpose()
         return PosteriorComponentProbability(new_prob_matrix)
+
+    def __sub__(
+        self, other: Union["PosteriorComponentProbability", npt.NDArray[data_dtype]]
+    ) -> npt.NDArray[data_dtype]:
+        if isinstance(other, PosteriorComponentProbability):
+            return np.array(self._prob_matrix - other.prob_matrix, dtype=data_dtype)
+        if isinstance(other, np.ndarray):
+            return np.array(self._prob_matrix - other, dtype=data_dtype)
+        raise TypeError("Unsupported operand type for subtracting from PosteriorComponentProbability")
