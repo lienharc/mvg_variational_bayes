@@ -46,6 +46,7 @@ class MultiVariateGaussVariationalBayes:
             If any of the parameters is out of range
         """
         self._k = k
+        self._components_alive = np.full((k,), True, dtype=np.bool_)  # type: npt.NDArray[np.bool_]
         if len(data.shape) != 1:
             raise AttributeError(
                 f"Data array has shape {data.shape} but needs to be one-dimensional. "
@@ -79,6 +80,11 @@ class MultiVariateGaussVariationalBayes:
         return self._k
 
     @property
+    def components_alive(self) -> npt.NDArray[np.bool_]:
+        """An array specifying which of the initial components are still alive."""
+        return self._components_alive.copy()
+
+    @property
     def weights(self) -> npt.NDArray[data_dtype]:
         """The weights for the components in the total a-posterior approximation."""
         return np.array(self._alpha / np.sum(self._alpha))
@@ -104,6 +110,10 @@ class MultiVariateGaussVariationalBayes:
                 f"least one component."
             )
         return np.array(np.sqrt(self._delta / (self._gamma - 2)), dtype=data_dtype)
+
+    @property
+    def q_z(self) -> PosteriorComponentProbability:
+        return self._q_z
 
     def set_hyperparameter_according_to_variance_range(self, mode: float, mean: float) -> None:
         """
@@ -189,6 +199,7 @@ class MultiVariateGaussVariationalBayes:
         self._q_z = self._q_z.reduce_components(keep_mask)
         self._k = int(np.sum(keep_mask))
 
+        self._components_alive[self._components_alive] = keep_mask
         return keep_mask
 
     def run(self, epsilon: float = 1.0) -> None:
@@ -205,14 +216,24 @@ class MultiVariateGaussVariationalBayes:
         if self._converged:
             raise RuntimeError(f"Approximation already ran. Initialize class again to run another time")
 
+        logging.info(f"Starting variational bayes approximation with {self._k} initial components.")
+        iteration = 0
         try:
             while not self._converged:
-                self._update_model_parameters()
-                logging.info(f"model complexity: {self._k}, convergence measure: {self.conv_meas}")
-                self._update_q_z()
-                self._reduce_complexity(epsilon=epsilon)
+                iteration += 1
+                logging.info(
+                    f"Iteration {iteration}: model complexity: {self._k}, convergence measure: {self.conv_meas}"
+                )
+                self.update_model(epsilon)
         except KeyboardInterrupt:
             logging.warning(f"Model optimization was interrupted by user.")
+        else:
+            logging.info(f"Optimization finished after {iteration} iterations. There are {self._k} components left.")
+
+    def update_model(self, epsilon: float = 1.0) -> None:
+        self._update_model_parameters()
+        self._update_q_z()
+        self._reduce_complexity(epsilon=epsilon)
 
     @staticmethod
     def _parse_initial_beta(beta: Optional[float]) -> float:

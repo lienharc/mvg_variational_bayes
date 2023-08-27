@@ -8,6 +8,34 @@ The whole project is largely based on a case-study by Clare Anne McGrory documen
 "Variational Approximations in Bayesian Model Selection".
 
 
+## Example: CT Scan of pork carcase
+
+As an example the CT scan of a pork carcase is analysed in order to classify different tissues.
+
+*See also the original case study in chapter 23 in the book [Case Studies in Bayesian Statistical Modelling and Anaylis](https://www.wiley.com/en-us/Case+Studies+in+Bayesian+Statistical+Modelling+and+Analysis-p-9781119941828)&*
+
+### Results
+
+Final approximation (starting with k=20 components) with k=6 components:
+
+![final approxiamtion](./src/demo/img/pork_final.png)
+
+Among other things we can visualize the probability that a pixel in the original scan belongs to one of the 6 components.
+
+![background](./src/demo/img/pork_comp_2.png)
+The first component (sharp peak to the left in the histogram above) specifies the background.
+
+Another component coincides with fat tissue:
+![fat tissue](./src/demo/img/pork_comp_4.png)
+
+Two components can be identified as muscle tissue:
+![muscle tissue 01](./src/demo/img/pork_comp_1.png)
+![muscle tissue 01](./src/demo/img/pork_comp_3.png)
+
+Another one as bone:
+![muscle tissue 01](./src/demo/img/pork_comp_5.png)
+
+
 ## Working with the source code
 
 Install dependencies including the dev dependencies:
