@@ -50,6 +50,13 @@ Install dependencies including the dev dependencies:
 
     pip install -e .[dev]
 
+Scripts in [src/demo](./src/demo) can be executed within that folder after installing the package as above
+
+If you just want to use the model for your own approximations without checking out the source code, install via
+
+    pip install git+https://github.com/lienharc/mvg_variational_bayes.git
+
+
 ## Theory overview
 
 *For a more detailed description see the complementary [presentation](presentation.pdf).*
