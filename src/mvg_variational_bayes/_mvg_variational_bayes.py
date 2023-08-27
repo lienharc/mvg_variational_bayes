@@ -115,6 +115,10 @@ class MultiVariateGaussVariationalBayes:
     def q_z(self) -> PosteriorComponentProbability:
         return self._q_z
 
+    @property
+    def converged(self) -> bool:
+        return self._converged
+
     def set_hyperparameter_according_to_variance_range(self, mode: float, mean: float) -> None:
         """
         This function sets the gamma and delta hyperparameters for the variance prior inverse gamma distribution such

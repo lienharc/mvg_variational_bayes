@@ -14,6 +14,9 @@ As an example the CT scan of a pork carcase is analysed in order to classify dif
 
 *See also the original case study in chapter 23 in the book [Case Studies in Bayesian Statistical Modelling and Anaylis](https://www.wiley.com/en-us/Case+Studies+in+Bayesian+Statistical+Modelling+and+Analysis-p-9781119941828)&*
 
+Timelaps of approximation (`k` being the number of components still in the race):
+![timelaps](./src/demo/img/pork_timelaps.gif)
+
 ### Results
 
 Final approximation (starting with k=20 components) with k=6 components:
